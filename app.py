@@ -248,17 +248,17 @@ if background_image:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# Determine page based on URL path and query, with fallback to session state
-query_params = st.query_params
+query_params = st.experimental_get_query_params()
 path = query_params.get("page", [None])[0]
 query = query_params.get("query", [None])[0]
 
-if path == "wakati-wa-bwana-full-album-access-2025" and query == "download":
+if path == "album" and query == "download":
     st.session_state.page = "Download Wakati Wa Bwana"
-elif path == "wakati-wa-bwana-single-track-access-2025" and query == "download":
+elif path == "single" and query == "download":
     st.session_state.page = "Download Single Song"
 else:
     st.session_state.page = "Home"
+
 
 # Pages
 if st.session_state.page == "Home":
