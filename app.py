@@ -267,8 +267,8 @@ if st.session_state.page == "Home":
     st.markdown("#### `Scan or download the QR codes to access our music content, launching June 1st!`", unsafe_allow_html=True)
 
     # QR code URLs
-    download_page_url = "https://wakatiwabwana-album05.streamlit.app/?page=wakati-wa-bwana-full-album-access-2025&query=download"
-    single_song_url = "https://wakatiwabwana-album05.streamlit.app/?page=wakati-wa-bwana-single-track-access-2025&query=download"
+    download_page_url = "https://wakatiwabwana-album05.streamlit.app/?page=album&query=download"
+    single_song_url = "https://wakatiwabwana-album05.streamlit.app/?page=single&query=download"
 
     # Load or generate QR codes
     qr_code_path = generate_qr_code(download_page_url, output_filename="qr_code.png")
