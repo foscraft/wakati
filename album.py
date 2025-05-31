@@ -165,8 +165,8 @@ if background_image:
 # Main content
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.markdown('<h1 class="title">Asante na ubarikiwe!</h1>', unsafe_allow_html=True)
-st.markdown("#### Wakati Wa Bwana Album by Imara Daima Youth Choir", unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Download Wakati Wa Bwana Album Songs Below</p>', unsafe_allow_html=True)
+st.markdown("#### `Wakati Wa Bwana Album by Imara Daima Youth Choir`", unsafe_allow_html=True)
+st.markdown("##### `Download Wakati Wa Bwana Album Songs Below`", unsafe_allow_html=True)
 
 # Display album cover and logo
 st.markdown('<div class="image-container">', unsafe_allow_html=True)
