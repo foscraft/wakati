@@ -53,7 +53,7 @@ def generate_single_song_qr_code(song_url, output_filename="wakati_wa_bwana_qr_c
 def get_mp3_files(song_folder="."):
     return sorted([f for f in os.listdir(song_folder) if f.endswith(".mp3")]) if os.path.exists(song_folder) else []
 
-# CSS styling
+# CSS styling (unchanged)
 background_image = get_base64_image("COVER.png")
 if background_image:
     st.markdown(
@@ -244,197 +244,205 @@ if background_image:
         unsafe_allow_html=True
     )
 
-# Page navigation using session state
+# Initialize session state
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-query_params = st.experimental_get_query_params()
-path = query_params.get("page", [None])[0]
-query = query_params.get("query", [None])[0]
+# Simplified page navigation logic
+query_params = st.query_params
+page_param = query_params.get("page", ["home"])[0].lower()
+query_param = query_params.get("query", [""])[0].lower()
 
-if path == "album" and query == "download":
+# Map query parameters to pages
+if page_param == "album" and query_param == "download":
     st.session_state.page = "Download Wakati Wa Bwana"
-elif path == "single" and query == "download":
+elif page_param == "single" and query_param == "download":
     st.session_state.page = "Download Single Song"
 else:
     st.session_state.page = "Home"
 
+# Add loading state
+with st.spinner("Loading page..."):
+    # Pages
+    if st.session_state.page == "Home":
+        st.markdown('<div class="main">', unsafe_allow_html=True)
+        st.markdown('<h3 class="title">Wakati Wa Bwana by Imara Daima Youth Choir</h3>', unsafe_allow_html=True)
+        st.markdown("#### Scan or download the QR codes to access our music content, launching June 1st!", unsafe_allow_html=True)
 
-# Pages
-if st.session_state.page == "Home":
-    st.markdown('<div class="main">', unsafe_allow_html=True)
-    st.markdown('<h3 class="title">Wakati Wa Bwana by Imara Daima Youth Choir</h3>', unsafe_allow_html=True)
-    st.markdown("#### `Scan or download the QR codes to access our music content, launching June 1st!`", unsafe_allow_html=True)
+        # QR code URLs (ensure these match your deployed app URL)
+        base_url = "https://wakatiwabwana-album05.streamlit.app"
+        download_page_url = f"{base_url}/?page=album&query=download"
+        single_song_url = f"{base_url}/?page=single&query=download"
 
-    # QR code URLs
-    download_page_url = "https://wakatiwabwana-album05.streamlit.app/?page=album&query=download"
-    single_song_url = "https://wakatiwabwana-album05.streamlit.app/?page=single&query=download"
+        # Load or generate QR codes
+        qr_code_path = generate_qr_code(download_page_url, output_filename="qr_code.png")
+        single_qr_code_path = generate_single_song_qr_code(single_song_url, output_filename="wakati_wa_bwana_qr_code.png")
 
-    # Load or generate QR codes
-    qr_code_path = generate_qr_code(download_page_url, output_filename="qr_code.png")
-    single_qr_code_path = generate_single_song_qr_code(single_song_url, output_filename="wakati_wa_bwana_qr_code.png")
+        # Load QR code images
+        try:
+            qr_image = Image.open(qr_code_path) if os.path.exists(qr_code_path) else None
+            single_qr_image = Image.open(single_qr_code_path) if os.path.exists(single_qr_code_path) else None
+        except FileNotFoundError:
+            st.error("QR code images not found. Please ensure 'qr_code.png' and 'wakati_wa_bwana_qr_code.png' are available.")
+            qr_image = single_qr_image = None
 
-    # Load QR code images
-    try:
-        qr_image = Image.open(qr_code_path)
-        single_qr_image = Image.open(single_qr_code_path)
-    except FileNotFoundError:
-        st.error("QR code images not found. Please ensure 'qr_code.png' and 'wakati_wa_bwana_qr_code.png' are available.")
-        qr_image = single_qr_image = None
+        # Display images and QR codes
+        col1, col2, col3 = st.columns([1, 1, 1], gap="small")
+        with col1:
+            if os.path.exists("COVER.png"):
+                st.markdown('<div class="album-cover">', unsafe_allow_html=True)
+                st.image("COVER.png", caption="Album Cover", use_container_width=True, output_format="PNG")
+                st.markdown('</div>', unsafe_allow_html=True)
+            else:
+                st.error("Album cover not found at 'COVER.png'. Please upload the file.")
+        with col2:
+            if qr_image:
+                st.markdown('<div class="qr-frame">', unsafe_allow_html=True)
+                st.image(qr_image, caption="Scan for Music Content", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown('<div class="qr-download-button">', unsafe_allow_html=True)
+                with open(qr_code_path, "rb") as f:
+                    st.download_button(
+                        label="Album QR Code",
+                        data=f,
+                        file_name="music_content_qr_code.png",
+                        mime="image/png",
+                        key="qr_download",
+                        help="Download the QR code for music content",
+                        type="primary"
+                    )
+                st.markdown('</div>', unsafe_allow_html=True)
+        with col3:
+            if single_qr_image:
+                st.markdown('<div class="qr-frame">', unsafe_allow_html=True)
+                st.image(single_qr_image, caption="Scan for Special Track", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown('<div class="qr-download-button">', unsafe_allow_html=True)
+                with open(single_qr_code_path, "rb") as f:
+                    st.download_button(
+                        label="Single QR Code",
+                        data=f,
+                        file_name="special_track_qr_code.png",
+                        mime="image/png",
+                        key="single_song_qr_download",
+                        help="Download the QR code for the special track",
+                        type="primary"
+                    )
+                st.markdown('</div>', unsafe_allow_html=True)
 
-    # Display images and QR codes
-    col1, col2, col3 = st.columns([1, 1, 1], gap="small")
-    with col1:
-        if os.path.exists("COVER.png"):
-            st.markdown('<div class="album-cover">', unsafe_allow_html=True)
-            st.image("COVER.png", caption="Album Cover", use_container_width=True, output_format="PNG")
-            st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<p class="footer">Presented by Imara Daima Youth Choir © 2025</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    elif st.session_state.page == "Download Wakati Wa Bwana":
+        st.markdown('<div class="main">', unsafe_allow_html=True)
+        st.markdown("## Download Wakati Wa Bwana", unsafe_allow_html=True)
+        st.markdown("#### Wakati Wa Bwana Album by Imara Daima Youth Choir", unsafe_allow_html=True)
+        st.markdown('<p class="subtitle">Explore and download individual songs or the full album.</p>', unsafe_allow_html=True)
+
+        # Display album cover and logo
+        st.markdown('<div class="image-container">', unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 1], gap="small")
+        with col1:
+            if os.path.exists("COVER.png"):
+                st.markdown('<div class="album-cover">', unsafe_allow_html=True)
+                st.image("COVER.png", caption="Wakati Wa Bwana Cover", width=200, output_format="PNG")
+                st.markdown('</div>', unsafe_allow_html=True)
+            else:
+                st.error("Album cover not found at 'COVER.png'. Please upload the file.")
+        with col2:
+            if os.path.exists("LOGO.png"):
+                st.markdown('<div class="album-cover">', unsafe_allow_html=True)
+                st.image("LOGO.png", caption="Imara Daima Youth Choir Logo", width=200, output_format="PNG")
+                st.markdown('</div>', unsafe_allow_html=True)
+            else:
+                st.error("Logo not found at 'LOGO.png'. Please upload the file.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Song list
+        st.markdown("### Song List", unsafe_allow_html=True)
+        mp3_files = get_mp3_files(".")
+
+        if mp3_files:
+            st.markdown(
+                '<div class="spotify-header">'
+                '<div class="title-column">Song Title</div>'
+                '<div class="button-column">Download</div>'
+                '</div>',
+                unsafe_allow_html=True
+            )
+            for index, file in enumerate(mp3_files):
+                title = os.path.splitext(file)[0].replace("_", " ").title()
+                full_path = os.path.join(".", file)
+                if os.path.exists(full_path):
+                    st.markdown('<div class="spotify-row">', unsafe_allow_html=True)
+                    col1, col2 = st.columns([3, 1], gap="small")
+                    with col1:
+                        st.markdown(f'<div class="title-column">{title}</div>', unsafe_allow_html=True)
+                    with col2:
+                        st.markdown('<div class="download-button">', unsafe_allow_html=True)
+                        with open(full_path, "rb") as f:
+                            st.download_button(
+                                label="Download Song",
+                                data=f,
+                                file_name=file,
+                                mime="audio/mpeg",
+                                key=f"song_{index}",
+                                help=f"Download {title}",
+                                type="primary"
+                            )
+                        st.markdown('</div>', unsafe_allow_html=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
+                else:
+                    st.markdown(
+                        f'<div class="spotify-row">'
+                        f'<div class="title-column">{title}</div>'
+                        f'<div class="button-column">Not found</div>'
+                        f'</div>',
+                        unsafe_allow_html=True
+                    )
         else:
-            st.error("Album cover not found at 'COVER.png'. Please upload the file.")
-    with col2:
-        if qr_image:
-            st.markdown('<div class="qr-frame">', unsafe_allow_html=True)
-            st.image(qr_image, caption="Scan for Music Content", use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-            st.markdown('<div class="qr-download-button">', unsafe_allow_html=True)
-            with open(qr_code_path, "rb") as f:
-                st.download_button(
-                    label="Album QR Code",
-                    data=f,
-                    file_name="music_content_qr_code.png",
-                    mime="image/png",
-                    key="qr_download",
-                    help="Download the QR code for music content",
-                    type="primary"
-                )
-            st.markdown('</div>', unsafe_allow_html=True)
-    with col3:
-        if single_qr_image:
-            st.markdown('<div class="qr-frame">', unsafe_allow_html=True)
-            st.image(single_qr_image, caption="Scan for Special Track", use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-            st.markdown('<div class="qr-download-button">', unsafe_allow_html=True)
-            with open(single_qr_code_path, "rb") as f:
-                st.download_button(
-                    label="Single QR Code",
-                    data=f,
-                    file_name="special_track_qr_code.png",
-                    mime="image/png",
-                    key="single_song_qr_download",
-                    help="Download the QR code for the special track",
-                    type="primary"
-                )
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.error("No songs found in the current folder. Please ensure the folder exists and contains MP3 files.")
 
-    st.markdown('<p class="footer">Presented by Imara Daima Youth Choir © 2025</p>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<p class="footer">Presented by Imara Daima Youth Choir © 2025</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-elif st.session_state.page == "Download Wakati Wa Bwana":
-    st.markdown('<div class="main">', unsafe_allow_html=True)
-    st.markdown("## `Download Wakati Wa Bwana`", unsafe_allow_html=True)
-    st.markdown("#### `Wakati Wa Bwana Album by Imara Daima Youth Choir`", unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Explore and download individual songs or the full album.</p>', unsafe_allow_html=True)
+    elif st.session_state.page == "Download Single Song":
+        st.markdown('<div class="main">', unsafe_allow_html=True)
+        st.markdown("## Download Wakati Wa Bwana Single", unsafe_allow_html=True)
+        st.markdown("#### Wakati Wa Bwana by Imara Daima Youth Choir", unsafe_allow_html=True)
+        st.markdown('<p class="subtitle">Download the single song "Wakati Wa Bwana".</p>', unsafe_allow_html=True)
 
-    # Display album cover and logo
-    st.markdown('<div class="image-container">', unsafe_allow_html=True)
-    col1, col2 = st.columns([1, 1], gap="small")
-    with col1:
+        # Display album cover
+        st.markdown('<div class="image-container">', unsafe_allow_html=True)
         if os.path.exists("COVER.png"):
             st.markdown('<div class="album-cover">', unsafe_allow_html=True)
             st.image("COVER.png", caption="Wakati Wa Bwana Cover", width=200, output_format="PNG")
             st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.error("Album cover not found at 'COVER.png'. Please upload the file.")
-    with col2:
-        if os.path.exists("LOGO.png"):
-            st.markdown('<div class="album-cover">', unsafe_allow_html=True)
-            st.image("LOGO.png", caption="Imara Daima Youth Choir Logo", width=200, output_format="PNG")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Download button for single song
+        song_file = "Wakati Wa Bwana.mp3"
+        if os.path.exists(song_file):
+            st.markdown('<div class="download-button">', unsafe_allow_html=True)
+            with open(song_file, "rb") as f:
+                st.download_button(
+                    label="Download Wakati Wa Bwana",
+                    data=f,
+                    file_name="Wakati Wa Bwana.mp3",
+                    mime="audio/mpeg",
+                    key="single_song_download",
+                    help="Download Wakati Wa Bwana",
+                    type="primary"
+                )
             st.markdown('</div>', unsafe_allow_html=True)
         else:
-            st.error("Logo not found at 'LOGO.png'. Please upload the file.")
-    st.markdown('</div>', unsafe_allow_html=True)
+            st.error("Song 'Wakati Wa Bwana.mp3' not found. Please ensure the file exists.")
 
-    # Song list
-    st.markdown("### `Song List`", unsafe_allow_html=True)
-    mp3_files = get_mp3_files(".")
-
-    if mp3_files:
-        st.markdown(
-            '<div class="spotify-header">'
-            '<div class="title-column">Song Title</div>'
-            '<div class="button-column">Download</div>'
-            '</div>',
-            unsafe_allow_html=True
-        )
-        for index, file in enumerate(mp3_files):
-            title = os.path.splitext(file)[0].replace("_", " ").title()
-            full_path = os.path.join(".", file)
-            if os.path.exists(full_path):
-                st.markdown('<div class="spotify-row">', unsafe_allow_html=True)
-                col1, col2 = st.columns([3, 1], gap="small")
-                with col1:
-                    st.markdown(f'<div class="title-column">{title}</div>', unsafe_allow_html=True)
-                with col2:
-                    st.markdown('<div class="download-button">', unsafe_allow_html=True)
-                    with open(full_path, "rb") as f:
-                        st.download_button(
-                            label="Download Song",
-                            data=f,
-                            file_name=file,
-                            mime="audio/mpeg",
-                            key=f"song_{index}",
-                            help=f"Download {title}",
-                            type="primary"
-                        )
-                    st.markdown('</div>', unsafe_allow_html=True)
-                st.markdown('</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(
-                    f'<div class="spotify-row">'
-                    f'<div class="title-column">{title}</div>'
-                    f'<div class="button-column">Not found</div>'
-                    f'</div>',
-                    unsafe_allow_html=True
-                )
-    else:
-        st.error("No songs found in the current folder. Please ensure the folder exists and contains MP3 files.")
-
-    st.markdown('<p class="footer">Presented by Imara Daima Youth Choir © 2025</p>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-elif st.session_state.page == "Download Single Song":
-    st.markdown('<div class="main">', unsafe_allow_html=True)
-    st.markdown("## `Download Wakati Wa Bwana Single`", unsafe_allow_html=True)
-    st.markdown("#### `Wakati Wa Bwana by Imara Daima Youth Choir`", unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Download the single song "Wakati Wa Bwana".</p>', unsafe_allow_html=True)
-
-    # Display album cover
-    st.markdown('<div class="image-container">', unsafe_allow_html=True)
-    if os.path.exists("COVER.png"):
-        st.markdown('<div class="album-cover">', unsafe_allow_html=True)
-        st.image("COVER.png", caption="Wakati Wa Bwana Cover", width=200, output_format="PNG")
+        st.markdown('<p class="footer">Presented by Imara Daima Youth Choir © 2025</p>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        st.error("Album cover not found at 'COVER.png'. Please upload the file.")
-    st.markdown('</div>', unsafe_allow_html=True)
 
-    # Download button for single song
-    song_file = "Wakati Wa Bwana.mp3"
-    if os.path.exists(song_file):
-        st.markdown('<div class="download-button">', unsafe_allow_html=True)
-        with open(song_file, "rb") as f:
-            st.download_button(
-                label="Download Wakati Wa Bwana",
-                data=f,
-                file_name="Wakati Wa Bwana.mp3",
-                mime="audio/mpeg",
-                key="single_song_download",
-                help="Download Wakati Wa Bwana",
-                type="primary"
-            )
-        st.markdown('</div>', unsafe_allow_html=True)
     else:
-        st.error("Song 'Wakati Wa Bwana.mp3' not found. Please ensure the file exists.")
-
-    st.markdown('<p class="footer">Presented by Imara Daima Youth Choir © 2025</p>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.error("Invalid page. Please return to the home page.")
+        st.markdown('<a href="/?page=home" class="download-button"><button>Go to Home</button></a>', unsafe_allow_html=True)
