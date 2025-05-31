@@ -170,7 +170,7 @@ st.markdown('<p class="subtitle">Download Wakati Wa Bwana Album Songs Below</p>'
 
 # Display album cover and logo
 st.markdown('<div class="image-container">', unsafe_allow_html=True)
-if os.path.exists("COVER.png") and os.path.exists("logo.png"):
+if os.path.exists("COVER.png") and os.path.exists("LOGO.png"):
     col1, col2 = st.columns(2)
     with col1:
         st.markdown('<div class="album-cover">', unsafe_allow_html=True)
@@ -178,13 +178,13 @@ if os.path.exists("COVER.png") and os.path.exists("logo.png"):
         st.markdown('</div>', unsafe_allow_html=True)
     with col2:
         st.markdown('<div class="album-cover">', unsafe_allow_html=True)
-        st.image("logo.png", width=370, output_format="PNG")
+        st.image("LOGO.png", width=370, output_format="PNG")
         st.markdown('</div>', unsafe_allow_html=True)
 else:
     if not os.path.exists("COVER.png"):
         st.warning("Album cover not found at 'COVER.png'. Please upload the file.")
-    if not os.path.exists("logo.png"):
-        st.warning("Logo not found at 'logo.png'. Please upload the file.")
+    if not os.path.exists("LOGO.png"):
+        st.warning("Logo not found at 'LOGO.png'. Please upload the file.")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # List songs
