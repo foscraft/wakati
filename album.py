@@ -312,10 +312,6 @@ with hcol1:
         st.markdown('<div class="cover-frame">', unsafe_allow_html=True)
         st.image("COVER.png", use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
-    if os.path.exists("LOGO.png"):
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.image("LOGO.png", use_container_width=True)
-
 with hcol2:
     n = len(music_files)
     st.markdown(
