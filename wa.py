@@ -256,7 +256,7 @@ if page == "Home":
     # Generate and show both QR codes with long URLs ending in ?query=download
     download_page_url = "https://wakatiwabwana-album.streamlit.app/wakati-wa-bwana-full-album-access-2025/?page=wakati-wa-bwana-full-album-access-2025&query=download"
     single_song_url = "https://wakatiwabwana-album.streamlit.app/wakati-wa-bwana-single-track-access-2025/?page=wakati-wa-bwana-single-track-access-2025&query=download"
-    qr_code_path = generate_qr_code(download_page_url, fill_color="#1db954", output_filename="qr_code.png")
+    qr_code_path = generate_qr_code(download_page_url, fill_color="#095925", output_filename="qr_code.png")
     single_qr_code_path = generate_single_song_qr_code(single_song_url, output_filename="wakati_wa_bwana_qr_code.png")
     qr_image = Image.open(qr_code_path)
     single_qr_image = Image.open(single_qr_code_path)
