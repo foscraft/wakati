@@ -66,7 +66,7 @@ def build_zip(files):
 # ══════════════════════════════════════════════════════════════════════════════
 # STYLES
 # ══════════════════════════════════════════════════════════════════════════════
-bg_b64 = b64_image("COVER.png")
+bg_b64 = b64_image("BACKGROUND.png")
 bg_css = (
     f"url(data:image/png;base64,{bg_b64})"
     if bg_b64
@@ -80,13 +80,15 @@ st.markdown(
 
 *, *::before, *::after {{ box-sizing: border-box; }}
 
-html, body, .stApp {{
-    background:
+html, body, .stApp,
+[data-testid="stAppViewContainer"] {{
+    background-image:
         linear-gradient(rgba(0,0,0,0.80), rgba(0,0,0,0.90)),
         {bg_css} !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-attachment: fixed !important;
+    background-size: cover, cover !important;
+    background-position: center, center !important;
+    background-repeat: no-repeat, no-repeat !important;
+    background-attachment: fixed, fixed !important;
     font-family: 'Montserrat', sans-serif !important;
     color: #fff !important;
 }}
