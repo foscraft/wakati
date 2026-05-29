@@ -4,21 +4,19 @@ import os
 import base64
 import io
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # CONFIGURATION — update both URLs after deploying album.py and single.py
-# ══════════════════════════════════════════════════════════════════════════════
+
 ALBUM_NAME     = "Kisa Cha Ajabu"
 ARTIST         = "Adventist Imara Daima Youth Choir"
 SINGLE_KEY     = "Kisa Cha Ajabu"
 YEAR           = "2026"
 
-# Generate and show both QR codes with long URLs ending in ?query=download
-ALBUM_APP_URL  = "https://kisachaajabuu-album.streamlit.app/kisa-cha-ajabu-album-access-2026/?page=kisa-cha-ajabu-album-access-2026&query=download"   # ← album.py URL
-SINGLE_APP_URL = "https://kisachaajabuu-single.streamlit.app/kisa-cha-ajabu-single-access-2026/?page=kisa-cha-ajabu-single-access-2026&query=download"  # ← single.py URL
+ALBUM_APP_URL  = "https://kisachaajabu-p64aw4idjxs5amwsbt02rjewm-album.streamlit.app"
+SINGLE_APP_URL = "https://kisachaajabu-vmzqlyj8ijna9dykpqhkozi-single.streamlit.app"
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # PAGE CONFIG
-# ══════════════════════════════════════════════════════════════════════════════
 st.set_page_config(
     page_title=f"{ALBUM_NAME} — {ARTIST}",
     page_icon="COVER.png" if os.path.exists("COVER.png") else "🎵",
@@ -27,9 +25,9 @@ st.set_page_config(
     menu_items={"Get Help": None, "Report a bug": None, "About": None},
 )
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
+
 @st.cache_resource
 def b64_image(path):
     if os.path.exists(path):
@@ -51,9 +49,9 @@ def make_qr(url, fill="#0e632c"):
     img.save(buf, format="PNG")
     return buf.getvalue()
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # STYLES
-# ══════════════════════════════════════════════════════════════════════════════
+
 bg_b64 = b64_image("COVER.png")
 bg_css = (
     f"url(data:image/png;base64,{bg_b64})"
@@ -236,9 +234,9 @@ header[data-testid="stHeader"] {{ display: none !important; }}
     unsafe_allow_html=True,
 )
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # HOME PAGE
-# ══════════════════════════════════════════════════════════════════════════════
+
 st.markdown(
     f'<div class="launch-banner">'
     f"🎉&nbsp; New Album Out Now &nbsp;·&nbsp; {ALBUM_NAME} &nbsp;·&nbsp; {ARTIST}"
