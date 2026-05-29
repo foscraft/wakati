@@ -352,7 +352,7 @@ header[data-testid="stHeader"] {{ display: none !important; }}
 </style>
 """, unsafe_allow_html=True)
 
-# ── Content ───────────────────────────────────────────────────────────────────
+# ── Content ────────
 
 music_files = list_music()
 
@@ -363,7 +363,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ── Hero ──────────────────────────────────────────────────────────────────────
+# ── Hero ───────────
 
 hcol1, hcol2 = st.columns([1, 1.75])
 
@@ -396,33 +396,33 @@ with hcol2:
         unsafe_allow_html=True,
     )
 
-# ── Featured single ───────────────────────────────────────────────────────────
+# # ── Featured single 
 
-single_file = next((f for f in music_files if song_title(f) == SINGLE_KEY), None)
-if single_file:
-    st.markdown('<p class="section-head">⭐ Featured Single</p>', unsafe_allow_html=True)
-    st.markdown(
-        f'<div class="single-card">'
-        f'<p class="sc-tag">⭐ Featured Single</p>'
-        f'<p class="sc-title">{SINGLE_KEY}</p>'
-        f'<p class="sc-artist">{ARTIST} &nbsp;·&nbsp; {YEAR}</p>'
-        f"</div>",
-        unsafe_allow_html=True,
-    )
-    audio_single = read_audio(single_file)
-    if audio_single:
-        st.markdown('<span class="preview-label">▶ Preview</span>', unsafe_allow_html=True)
-        scol1, scol2 = st.columns([1.8, 1])
-        with scol1:
-            st.audio(audio_single, format="audio/mpeg")
-        with scol2:
-            st.download_button(
-                "⬇ Download Single",
-                data=audio_single,
-                file_name=f"{SINGLE_KEY}.mp3",
-                mime="audio/mpeg",
-                key="single_featured_dl",
-            )
+# single_file = next((f for f in music_files if song_title(f) == SINGLE_KEY), None)
+# if single_file:
+#     st.markdown('<p class="section-head">⭐ Featured Single</p>', unsafe_allow_html=True)
+#     st.markdown(
+#         f'<div class="single-card">'
+#         f'<p class="sc-tag">⭐ Featured Single</p>'
+#         f'<p class="sc-title">{SINGLE_KEY}</p>'
+#         f'<p class="sc-artist">{ARTIST} &nbsp;·&nbsp; {YEAR}</p>'
+#         f"</div>",
+#         unsafe_allow_html=True,
+#     )
+#     audio_single = read_audio(single_file)
+#     if audio_single:
+#         st.markdown('<span class="preview-label">▶ Preview</span>', unsafe_allow_html=True)
+#         scol1, scol2 = st.columns([1.8, 1])
+#         with scol1:
+#             st.audio(audio_single, format="audio/mpeg")
+#         with scol2:
+#             st.download_button(
+#                 "⬇ Download Single",
+#                 data=audio_single,
+#                 file_name=f"{SINGLE_KEY}.mp3",
+#                 mime="audio/mpeg",
+#                 key="single_featured_dl",
+#             )
 
 # ── Download full album ───────────────────────────────────────────────────────
 
@@ -447,7 +447,7 @@ if music_files:
                 key="album_zip_dl",
             )
 
-# ── Track list ────────────────────────────────────────────────────────────────
+# ── Track list ─────
 
 st.markdown('<p class="section-head">🎵 All Tracks</p>', unsafe_allow_html=True)
 
